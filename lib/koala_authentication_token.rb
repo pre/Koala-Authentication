@@ -28,15 +28,15 @@ class KoalaAuthenticationToken
     end
   end
   
-  private
-  
+  protected
+    
   def decrypt_sensitive(data = {})  
     cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')  
     cipher.decrypt  
-    cipher.key = @@private_key.private_decrypt(Base64.decode64(self.base64_key))  
-    cipher.iv = @@private_key.private_decrypt(Base64.decode64(self.base64_iv))  
+    cipher.key = @@public_key.public_decrypt(Base64.decode64(self.base64_key))  
+    cipher.iv = @@public_key.public_decrypt(Base64.decode64(self.base64_iv))  
 
-    decrypted_data = cipher.update(Base64.decode64(self.base64_data)
+    decrypted_data = cipher.update(Base64.decode64(self.base64_data))
     decrypted_data << cipher.final
     
     self.plain_data = decrypted_data
