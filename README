@@ -4,6 +4,10 @@ KoalaAuthentication
 External authentication plugin. 
 
 
+Configuration
+=============
+Copy "setup_files/koala_authentication_config.rb" to "RAILS_ROOT/config/initializers".
+
 Example
 =======
 

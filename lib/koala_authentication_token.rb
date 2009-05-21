@@ -3,34 +3,31 @@ require 'base64'
 
 class KoalaAuthenticationToken
 
-  # TODO: Tarvitsisiko näiden olla ennemmin jossain konffattavassa tiedostossa?
-  #       Olivat initializerina ennen kuin tein tästä pluginin.
-  SERVER_PRIVATE_KEY_FILE = File.join("#{RAILS_ROOT}", "/config", 'private_server_key.pem')
-  SERVER_PUBLIC_KEY_FILE  = File.join("#{RAILS_ROOT}", "/config", 'public_server_key.pem')
-  
-  attr_accessor :base64_data, :base64_key, :base64_iv
+  attr_accessor :base64_data, :base64_key, :base64_iv, :plain_data
 
-  @@private_key = OpenSSL::PKey::RSA.new(File.read(SERVER_PRIVATE_KEY_FILE))
+  @@private_key = OpenSSL::PKey::RSA.new(File.read(SERVER_PRIVATE_KEY_FILE)) unless KoalaAuthenticationConfig::CLIENT_CONFIGURATION
   @@public_key = OpenSSL::PKey::RSA.new(File.read(SERVER_PUBLIC_KEY_FILE))  
     
-  def initialize(plain_data)  
-    self.encrypt_sensitive(plain_data)
+  def initialize(data, format)
+    case format when :plain
+      self.encrypt_sensitive(plain_data)
+    when :encrypted
+      self.decrypt_sensitive(data)
+    else
+      raise ArgumentError.new("Incorrect format parameter '#{format}', only :plain and :encrypted allowed.")
+    end
   end
   
-  # def decrypt_sensitive(password)  
-  #   if self.encrypted_data  
-  #     private_key = OpenSSL::PKey::RSA.new(File.read(APP_CONFIG['private_key']),password)  
-  #     cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')  
-  #     cipher.decrypt  
-  #     cipher.key = private_key.private_decrypt(self.encrypted_key)  
-  #     cipher.iv = private_key.private_decrypt(self.encrypted_iv)  
-  # 
-  #     decrypted_data = cipher.update(self.encrypted_data)  
-  #     decrypted_data << cipher.final  
-  #   else  
-  #     ''  
-  #   end  
-  # end  
+  def decrypt_sensitive(data = {})  
+    raise "data: #{data.inspect}"
+    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')  
+    cipher.decrypt  
+    cipher.key = @@private_key.private_decrypt(self.encrypted_key)  
+    cipher.iv = @@private_key.private_decrypt(self.encrypted_iv)  
+
+    decrypted_data = cipher.update(self.encrypted_data)  
+    decrypted_data << cipher.final  
+  end  
   # 
   #def clear_sensitive  
   #  self.encrypted_data = self.encrypted_key = self.encrypted_iv = nil  
