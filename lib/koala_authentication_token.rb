@@ -5,8 +5,8 @@ class KoalaAuthenticationToken
 
   attr_accessor :base64_data, :base64_key, :base64_iv, :plain_data
 
-  @@private_key = OpenSSL::PKey::RSA.new(File.read(SERVER_PRIVATE_KEY_FILE)) unless KoalaAuthenticationConfig::CLIENT_CONFIGURATION
-  @@public_key = OpenSSL::PKey::RSA.new(File.read(SERVER_PUBLIC_KEY_FILE))  
+  @@private_key = OpenSSL::PKey::RSA.new(File.read(KoalaAuthenticationConfig::SERVER_PRIVATE_KEY_FILE)) unless KoalaAuthenticationConfig::CLIENT_CONFIGURATION
+  @@public_key = OpenSSL::PKey::RSA.new(File.read(KoalaAuthenticationConfig::SERVER_PUBLIC_KEY_FILE))  
     
   def initialize(data, format)
     case format when :plain
