@@ -1,17 +1,19 @@
-KoalaAuthentication
-===================
+Koala Authentication
+====================
 
-External authentication plugin. 
+Single Sign On plugin for Ruby on Rails.
+
+PLEASE NOTE: 
+
+This cannot be used as a standalone plugin (yet). 
+I will probably extract the missing parts from my projects' code, 
+but that will happen "later".
 
 
 Configuration
 =============
 Copy "setup_files/koala_authentication_config.rb" to "RAILS_ROOT/config/initializers".
 
-Example
-=======
-
-Example goes here. Laterz, lol!
 
 
 Copyright (c) 2009 [Petrus Repo], released under the MIT license
